@@ -82,11 +82,16 @@ Default: feishu
 >       "im:message", "im:message:send_as_bot", "im:message.p2p_msg:readonly",
 >       "im:message.group_at_msg:readonly", "im:message:readonly", "im:resource",
 >       "im:chat.access_event.bot_p2p_chat:read", "im:chat.members:bot_access",
->       "drive:drive", "drive:drive:readonly", "sheets:spreadsheet",
->       "bitable:app", "calendar:calendar", "calendar:calendar:readonly"
+>       "drive:drive", "drive:drive:readonly",
+>       "docx:document", "docx:document:readonly",
+>       "sheets:spreadsheet", "bitable:app",
+>       "calendar:calendar", "calendar:calendar:readonly",
+>       "search:docs"
 >     ],
 >     "user": [
->       "drive:drive", "sheets:spreadsheet", "bitable:app",
+>       "drive:drive", "drive:drive:readonly",
+>       "docx:document", "docx:document:readonly",
+>       "sheets:spreadsheet", "bitable:app",
 >       "calendar:calendar", "calendar:calendar:readonly"
 >     ]
 >   }

@@ -147,7 +147,7 @@ def main():
         "app_id": APP_ID,
         "redirect_uri": REDIRECT_URI,
         "response_type": "code",
-        "scope": "drive:drive bitable:app sheets:spreadsheet",
+        "scope": "drive:drive bitable:app sheets:spreadsheet calendar:calendar calendar:calendar:readonly docx:document docx:document:readonly",
     })
     auth_url = f"https://open.feishu.cn/open-apis/authen/v1/authorize?{params}"
 

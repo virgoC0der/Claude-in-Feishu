@@ -73,16 +73,22 @@ Leave empty to allow anyone who can message the bot.
       "im:resource",
       "drive:drive",
       "drive:drive:readonly",
+      "docx:document",
+      "docx:document:readonly",
       "sheets:spreadsheet",
       "bitable:app",
       "calendar:calendar",
-      "calendar:calendar:readonly"
+      "calendar:calendar:readonly",
+      "search:docs"
     ],
     "user": [
       "aily:file:read",
       "aily:file:write",
       "im:chat.access_event.bot_p2p_chat:read",
       "drive:drive",
+      "drive:drive:readonly",
+      "docx:document",
+      "docx:document:readonly",
       "sheets:spreadsheet",
       "bitable:app",
       "calendar:calendar",
