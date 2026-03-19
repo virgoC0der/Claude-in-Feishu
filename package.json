@@ -1,0 +1,18 @@
+{
+  "name": "claude-in-feishu",
+  "version": "0.1.0",
+  "description": "Mobile-controlled Claude Code autopilot with Feishu integration and session journaling",
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.js"
+  },
+  "dependencies": {
+    "claude-to-im": "github:op7418/claude-to-im",
+    "@anthropic-ai/claude-agent-sdk": "^0.2.69"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3",
+    "esbuild": "^0.25.12",
+    "@types/node": "^22.19.13"
+  }
+}
