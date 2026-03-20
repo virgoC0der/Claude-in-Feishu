@@ -130,12 +130,13 @@ export class SDKLLMProvider implements LLMProvider {
           try {
             const cleanEnv = buildSubprocessEnv();
 
+            const permissionMode = (params.permissionMode as 'default' | 'acceptEdits' | 'plan' | 'bypassPermissions') || undefined;
             const queryOptions: Record<string, unknown> = {
               cwd: params.workingDirectory,
               model: params.model,
               resume: params.sdkSessionId || undefined,
               abortController: params.abortController,
-              permissionMode: (params.permissionMode as 'default' | 'acceptEdits' | 'plan') || undefined,
+              permissionMode,
               includePartialMessages: true,
               env: cleanEnv,
               canUseTool: async (
@@ -143,6 +144,11 @@ export class SDKLLMProvider implements LLMProvider {
                   input: Record<string, unknown>,
                   opts,
                 ): Promise<PermissionResult> => {
+                  // In bypassPermissions mode, allow all tool calls without user confirmation
+                  if (permissionMode === 'bypassPermissions') {
+                    return { behavior: 'allow' as const };
+                  }
+
                   // Emit permission_request SSE event for the bridge
                   controller.enqueue(
                     sseEvent('permission_request', {
