@@ -19,7 +19,7 @@ allowed-tools:
 ## Architecture
 
 ```
-Phone (Feishu) → Local daemon → Claude Code CLI → Your Mac + Feishu API
+Phone (Feishu) → Local daemon → Claude Code CLI → Your Mac + lark-cli (Feishu API)
                                                          ↓
                                               Auto-journal on exit (Haiku)
 ```
@@ -29,10 +29,10 @@ Phone (Feishu) → Local daemon → Claude Code CLI → Your Mac + Feishu API
 | Capability | How |
 |---|---|
 | **Mobile → Claude Code** | IM bot daemon bridges messages to local Claude Code sessions |
-| **Feishu Docs** | Create, read, search, append, move documents |
-| **Feishu Calendar** | Create events, list calendars |
-| **Send files to phone** | Upload images/files directly to Feishu chat |
-| **Screenshot review** | Take screenshots of local apps, send to Feishu for mobile product review |
+| **Feishu Docs** | Via `lark-cli docs` — create, read, search, append, move documents |
+| **Feishu Calendar** | Via `lark-cli calendar` — create events, list calendars, check free/busy |
+| **Send files to phone** | Via `lark-cli im` — upload images/files directly to Feishu chat |
+| **Screenshot review** | Take screenshots of local apps, send to Feishu via `lark-cli im` for mobile product review |
 | **Cross-session visibility** | All sessions run in tmux, can read each other |
 | **Session journals** | Stop hook auto-summarizes every session via Haiku |
 
@@ -49,6 +49,7 @@ node --version    # Must be >= 20
 python3 --version # Must be >= 3.8
 which tmux        # Must exist
 which claude      # Must exist
+which lark-cli    # Must exist (for Feishu operations)
 ```
 If any fails, tell the user what to install and stop.
 
@@ -127,12 +128,17 @@ Default: feishu
 >
 > 是否现在进行 OAuth 授权？(y/n，默认 y)
 
-If yes, run:
+If yes, first ensure lark-cli is configured with the app credentials:
 ```bash
-cd <skill_directory>
-FEISHU_APP_ID=$APP_ID FEISHU_APP_SECRET=$APP_SECRET python3 scripts/feishu_oauth.py
+lark-cli config init --new
+# Enter App ID and App Secret when prompted
 ```
-This will open a browser window for OAuth authorization. The user_access_token will be saved to `~/.claude-in-feishu/feishu_user_token.json`.
+
+Then run OAuth login with the required scopes:
+```bash
+lark-cli auth login
+```
+This will open a browser window for OAuth authorization. Tokens are managed by lark-cli automatically.
 
 **Step 2g**: Shared calendar setup for event visibility:
 
@@ -140,7 +146,7 @@ This will open a browser window for OAuth authorization. The user_access_token w
 > 推荐做法是创建一个**共享日历**：
 >
 > 1. 在飞书日历中新建一个日历（如「Claude 任务」）
-> 2. 记下这个日历的 calendar_id（可通过 `python3 scripts/feishu_docs.py cal_list` 查看）
+> 2. 记下这个日历的 calendar_id（可通过 `lark-cli calendar calendars list` 查看）
 > 3. Bot 创建事件时指定这个 calendar_id，事件就会出现在你的日历中
 >
 > 是否跳过日历配置？(y/n，默认跳过)
@@ -258,12 +264,13 @@ Node.js daemon using `claude-to-im` + `@anthropic-ai/claude-agent-sdk`:
 - **config.ts** — Reads `~/.claude-in-feishu/config.env`
 - **logger.ts** — Secret-redacting log rotation
 
-### 2. Feishu Toolkit (`scripts/feishu_docs.py`)
-Python CLI for Feishu Open API:
-- `read/create/append/search/move/list` — Document ops
-- `cal_list/event_create/event_list` — Calendar ops
-- `send_image/send_file` — Send files to Feishu chat
-- `mkdir/folders/organize` — Drive management
+### 2. Feishu Toolkit (via `lark-cli`)
+All Feishu operations use `lark-cli` and corresponding `/lark-*` skills:
+- **Documents**: `/lark-doc` — `lark-cli docs +create/+fetch/+update/+search` — Create, read, append, search documents
+- **Calendar**: `/lark-calendar` — `lark-cli calendar +agenda/+create/+freebusy` — Events, scheduling
+- **Messaging**: `/lark-im` — `lark-cli im +messages-send` — Send messages, images, files to Feishu chat
+- **Drive**: `/lark-drive` — `lark-cli drive +upload/+download` — File/folder management
+- **Auth**: `/lark-shared` — `lark-cli config init` / `lark-cli auth login` — App config and OAuth
 
 ### 3. Session Journals (`journals/`)
 Auto-journaling on session exit:
@@ -281,4 +288,5 @@ Shell function that auto-wraps `claude` in tmux sessions for cross-session visib
 - Node.js 20+
 - Python 3
 - tmux
+- `lark-cli` (install via `npm install -g @larksuite/cli`)
 - A Feishu custom app (create at https://open.feishu.cn/app)
